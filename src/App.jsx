@@ -6,6 +6,8 @@ import Confetti from "./Confetti"
 export default function App() {
   
     const [dice,setDice] = React.useState(()=>generateAllNewDice())
+    
+    const [rollCount, setRollCount] = React.useState(0);
 
     const buttonRef = React.useRef(null)
     
@@ -26,15 +28,18 @@ export default function App() {
             }))
     }
 
-    function rollDice(){
-      if(!gameWon){
-      setDice(dice=>dice.map(item=>
-        item.isHeld ? item : {...item,value:Math.ceil(Math.random() * 6)}
-      ))}
-      else{
-        setDice(generateAllNewDice())
+    function rollDice() {
+    if (!gameWon) {
+        setDice(dice => dice.map(item =>
+            item.isHeld ? item : { ...item, value: Math.ceil(Math.random() * 6) }
+        ));
+        setRollCount(prev => prev + 1); // Increment roll count
+        } else {
+          setDice(generateAllNewDice());
+          setRollCount(0); // Reset roll count
       }
     }
+
 
     function hold(id){
       setDice(dice => dice.map(item=>
@@ -55,13 +60,20 @@ export default function App() {
       {gameWon && <Confetti />}
       <div aria-live="polite" className="sr-only">
                 {gameWon && <p>Congratulations! You won! Press "New Game" to start again.</p>}
-            </div>
+        </div>
        <h1 className="title">Tenzies</h1>
-            <p className="instructions">Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
-      <div className="dice-container">
+        <h2 style={{ color: gameWon ? "green" : "red", margin: "10px 0", fontWeight: gameWon ? "bold" : "normal" }}>
+          {gameWon
+            ? 'Congratulations! You won'
+            : (rollCount > 0 ? `No of Rolls = ${rollCount}` : 'Click "Roll" to start the game')}
+        </h2>
+
+
+        <div className="dice-container">
           {die}
-      </div>
-      <button className="roll-dice" onClick={rollDice} ref={buttonRef} >{gameWon ? "New Game" : "Roll"}</button>
+        </div>
+        
+        <button className="roll-dice" onClick={rollDice} ref={buttonRef} >{gameWon ? "New Game" : "Roll"}</button>
       
     </main>)
 }
