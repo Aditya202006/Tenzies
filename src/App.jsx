@@ -11,7 +11,7 @@ export default function App() {
 
     const buttonRef = React.useRef(null)
     
-    const gameWon = (dice.every(die=>die.value) && dice.every(die=>die.isHeld))
+    const gameWon = dice.every(die => die.isHeld && die.value === dice[0].value);
 
     React.useEffect(() => {
         if (gameWon) {
